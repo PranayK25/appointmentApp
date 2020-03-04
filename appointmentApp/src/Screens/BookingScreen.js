@@ -6,20 +6,21 @@ import AvailableSlotsContainer from '../Components/AvaliableSlotsContainer';
 const BookingScreen = props => {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [bookings, setBookings] = useState([]);
-  // const [newBooking, setNewBooking] = useState({});
 
   const confirmBooking = () => {
-    // setNewBooking(bookings[selectedIndex]);
+    updateBooking();
+    bookings[selectedIndex].isBooked = true;
     newBookingHandler();
-    removeBooking();
     props.navigation.navigate({routeName: 'Consultation'});
   };
 
-  const removeBooking = () => {
-    firebase
-      .database()
-      .ref(`/BookingSlots/${selectedIndex}`)
-      .remove();
+  const updateBooking = () => {
+    if (selectedIndex !== null) {
+      firebase
+        .database()
+        .ref(`/BookingSlots/${selectedIndex}`)
+        .update({isBooked: true});
+    }
   };
 
   const newBookingHandler = () => {
@@ -35,16 +36,9 @@ const BookingScreen = props => {
       .ref('/BookingSlots')
       .on('value', querySnapShot => {
         let data = querySnapShot.val() ? querySnapShot.val() : {};
-        // console.log(data);
-        // let bookingList = [...data];
-        // setBookings(bookingList);
-        setBookings(data);
+        setBookings(Object.values(data));
       });
   }, []);
-
-  // useEffect(() => {
-  //   console.log(bookings);
-  // }, [bookings]);
 
   return (
     <View style={styles.slotContainer}>
@@ -55,15 +49,12 @@ const BookingScreen = props => {
         keyExtractor={(item, index) => index.toString()}
         data={bookings}
         renderItem={({item: itemData, index}) => {
-          if (!itemData) {
-            return null;
-          } else {
+          if (itemData && itemData.isBooked === false) {
             return (
               <AvailableSlotsContainer
                 doctor={itemData.Doctor}
                 speciality={itemData.Speciality}
                 time={itemData.Time}
-                id={itemData.id}
                 checked={index === selectedIndex}
                 onCheck={setSelectedIndex}
                 index={index}
