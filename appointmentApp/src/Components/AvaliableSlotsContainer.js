@@ -4,7 +4,7 @@ import CheckBox from 'react-native-check-box';
 
 const AvailableSlotsContainer = props => {
   const handleCheckbox = () => {
-    props.onCheck(props.index);
+    props.onCheck(props.id);
   };
 
   return (

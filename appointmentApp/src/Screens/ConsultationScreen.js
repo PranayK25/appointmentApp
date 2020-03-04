@@ -5,6 +5,7 @@ import * as firebase from 'firebase';
 
 const ConsulationScreen = props => {
   const [consultations, setConsultations] = useState([]);
+  // const [filteredList, setFilteredList] = useState([]);
 
   const onNewBooking = () => {
     props.navigation.navigate({routeName: 'Booking'});
@@ -14,21 +15,24 @@ const ConsulationScreen = props => {
     props.navigation.navigate({routeName: 'Filter'});
   };
 
+  // const onFilter = () => {
+  //   setFilteredList(
+  //     consultations.filter(
+  //       consultation =>
+  //         (consultation.date === filterDate && consultation.time === filterTime)
+  //     ),
+  //   );
+  // };
+
   useEffect(() => {
     firebase
       .database()
       .ref('/Consultations')
       .on('value', querySnapShot => {
         let data = querySnapShot.val() ? querySnapShot.val() : {};
-        // console.log(data);
-        // let consultationList = [...data];
         setConsultations(Object.values(data));
       });
   }, []);
-
-  // useEffect(() => {
-  //   console.log(consultations);
-  // }, [consultations]);
 
   return (
     <View style={styles.consultationContainer}>
@@ -60,6 +64,7 @@ const ConsulationScreen = props => {
                 doctor={itemData.Doctor}
                 speciality={itemData.Speciality}
                 time={itemData.Time}
+                date={itemData.Date}
               />
             );
           }

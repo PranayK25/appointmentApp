@@ -5,12 +5,14 @@ const ConsultationContainer = props => {
   return (
     <View style={styles.container}>
       <View style={styles.containerText}>
-        <Text style={styles.consultationText}>Doctor: </Text>
-        <Text style={styles.consultationText}>Date and Time: </Text>
+        <Text style={styles.consultationText1}>Doctor: </Text>
+        <Text style={styles.consultationText1}>Date and Time: </Text>
       </View>
       <View style={styles.detailText}>
         <Text style={styles.consultationText}>{props.doctor}</Text>
-        <Text style={styles.consultationText}>{props.time}</Text>
+        <Text style={styles.consultationText}>
+          {props.date} , {props.time}
+        </Text>
       </View>
     </View>
   );
@@ -31,7 +33,11 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   consultationText: {
-    fontSize: 16,
+    fontSize: 15,
+  },
+  consultationText1: {
+    fontWeight: 'bold',
+    fontSize: 15,
   },
 });
 
