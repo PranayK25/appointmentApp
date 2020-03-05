@@ -1,12 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {
-  Text,
-  View,
-  StyleSheet,
-  Button,
-  // FlatList,
-  SectionList,
-} from 'react-native';
+import {Text, View, StyleSheet, Button, SectionList} from 'react-native';
 import * as firebase from 'firebase';
 import AvailableSlotsContainer from '../Components/AvaliableSlotsContainer';
 
@@ -14,7 +7,6 @@ const BookingScreen = props => {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [localBookingList, setLocalBookingList] = useState([]);
-  // const [sectionBookings, setSectionBookings] = useState([]);
 
   useEffect(() => {
     firebase
@@ -25,53 +17,35 @@ const BookingScreen = props => {
         const sectionData = onSection(data);
         setLocalBookingList(Object.values(data));
         setBookings(sectionData);
-        // setBookings(data);
-        // console.log(data)
       });
   }, []);
 
-  // useEffect(() => {
-  //   onSection(bookings);
-  // }, []);
-
-  // useEffect(() => {
-  //   console.log(bookings);
-  // }, [sectionListArray]);
-
   const onSection = data => {
-    let sectionListArray = [];
-    data.forEach(element => {
-      if (element) {
-        sectionListArray.push({
-          title: element.Date,
-          data: [
-            {
-              doctor: element.Doctor,
-              time: element.Time,
-              speciality: element.Speciality,
-              isBooked: element.isBooked,
-              id: element.id,
-            },
-          ],
+    let sectionListArray = Object.values(data);
+    let res = sectionListArray.reduce((re, o) => {
+      let existObj = re.find(obj => obj.title === o.Date);
+      if (existObj) {
+        existObj.data.push(o);
+      } else {
+        re.push({
+          title: o.Date,
+          data: [o],
         });
       }
-    });
-    return sectionListArray;
-    // console.log(sectionListArray);
+      return re;
+    }, []);
+    return res;
   };
-
-  // useEffect(() => {
-  //   console.log(sectionBookings);
-  // }, [sectionBookings]);
 
   const confirmBooking = () => {
     if (selectedIndex !== null) {
-      console.log(localBookingList[selectedIndex])
       updateBooking();
       localBookingList[selectedIndex - 1].isBooked = true;
       newBookingHandler();
+      setSelectedIndex(null);
       props.navigation.navigate({routeName: 'Consultation'});
     } else {
+      setSelectedIndex(null);
       props.navigation.navigate({routeName: 'Consultation'});
     }
   };
@@ -97,43 +71,6 @@ const BookingScreen = props => {
       <View style={styles.headerContainer}>
         <Text style={styles.header}>Available Slots</Text>
       </View>
-      {/* <Text>{JSON.stringify(bookings, null, 4)}</Text> */}
-      {/* <FlatList
-        keyExtractor={(item, index) => index.toString()}
-        data={bookings}
-        renderItem={({item: itemData, index}) => {
-          if (itemData && itemData.isBooked === false) {
-            return (
-              <AvailableSlotsContainer
-                doctor={itemData.Doctor}
-                speciality={itemData.Speciality}
-                time={itemData.Time}
-                checked={index === selectedIndex}
-                onCheck={setSelectedIndex}
-                index={index}
-              />
-            );
-          }
-        }}
-      /> */}
-      {/* <SectionList
-        keyExtractor={(item, index) => index.toString()}
-        sections={bookings || []}
-        renderItem={({item, index}) => {
-          // if (item.isBooked === false) {
-          return (
-            <AvailableSlotsContainer
-              doctor={item.doctor}
-              speciality={item.speciality}
-              time={item.time}
-              checked={index === selectedIndex}
-              onCheck={setSelectedIndex}
-              index={index}
-            />
-          );
-        }}
-        renderSectionHeader={({section: {title}}) => <Text>{title}</Text>}
-      /> */}
       <SectionList
         keyExtractor={(item, index) => index.toString()}
         sections={bookings}
@@ -141,9 +78,9 @@ const BookingScreen = props => {
           if (item.isBooked === false) {
             return (
               <AvailableSlotsContainer
-                doctor={item.doctor}
-                speciality={item.speciality}
-                time={item.time}
+                doctor={item.Doctor}
+                speciality={item.Speciality}
+                time={item.Time}
                 checked={item.id === selectedIndex}
                 onCheck={setSelectedIndex}
                 id={item.id}
@@ -153,7 +90,11 @@ const BookingScreen = props => {
             return null;
           }
         }}
-        renderSectionHeader={({section: {title}}) => <Text>{title}</Text>}
+        renderSectionHeader={({section: {title}}) => {
+          if ({title}) {
+            return <Text>{title}</Text>;
+          }
+        }}
       />
       <View style={styles.buttonContainer}>
         <View style={styles.buttonContainerstyle}>
@@ -198,11 +139,3 @@ const styles = StyleSheet.create({
 });
 
 export default BookingScreen;
-
-// https://www.reddit.com/r/reactnative/comments/aaww56/using_sectionlist_how_would_i_programatically/
-
-// [
-//   { title: 'Section Head For Data A', data: [{name: 'Gaurav', last_name: 'Ahuja'}] },
-//   { title: 'Section Head For Data B', data: [{name: 'Gaurav', last_name: 'Ahuja'}] },
-//   { title: 'Section Head For Data C', data: [{name: 'Gaurav', last_name: 'Ahuja'}] },
-//  ]

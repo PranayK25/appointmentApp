@@ -20,7 +20,6 @@ const LoginScreen = props => {
         .auth()
         .signInWithEmailAndPassword(email, password)
         .then(res => {
-          // console.log(res.user.email);
           props.navigation.navigate({routeName: 'Consultation'});
         });
     } catch (error) {
