@@ -1,10 +1,18 @@
 import React, {useEffect, useState} from 'react';
-import {Text, View, StyleSheet, Button, FlatList} from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Button,
+  FlatList,
+  AsyncStorage,
+} from 'react-native';
 import ConsultationContainer from '../Components/ConsultationContainer';
 import * as firebase from 'firebase';
 
 const ConsulationScreen = props => {
   const [consultations, setConsultations] = useState([]);
+  let userName;
   // const [filteredList, setFilteredList] = useState([]);
 
   const onNewBooking = () => {
@@ -32,7 +40,19 @@ const ConsulationScreen = props => {
         let data = querySnapShot.val() ? querySnapShot.val() : {};
         setConsultations(Object.values(data));
       });
+    // userName = userNameHandler();
+    // console.log(userName);
   }, []);
+
+  const userNameHandler = async () => {
+    let userId = '';
+    try {
+      userId = (await AsyncStorage.getItem('userName')) || 'none';
+    } catch (error) {
+      console.log(error.message);
+    }
+    return userId;
+  };
 
   return (
     <View style={styles.consultationContainer}>
@@ -50,7 +70,7 @@ const ConsulationScreen = props => {
         </View>
       </View>
       <View style={styles.userTextContainer}>
-        <Text style={styles.userText}>Member :</Text>
+        <Text style={styles.userText}>Member : </Text>
       </View>
       <FlatList
         keyExtractor={(item, index) => index.toString()}

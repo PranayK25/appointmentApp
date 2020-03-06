@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Text, Button, View, StyleSheet, TouchableOpacity} from 'react-native';
+import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const CalendarPicker = () => {

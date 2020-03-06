@@ -13,7 +13,7 @@ const Navigator = createStackNavigator(
     Booking: BookingScreen,
   },
   {
-    initialRouteName: 'Booking',
+    initialRouteName: 'Login',
     defaultNavigationOptions: {
       headerShown: false,
     },

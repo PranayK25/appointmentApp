@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, TextInput, Button} from 'react-native';
+import {View, StyleSheet, TextInput, Button, AsyncStorage} from 'react-native';
 import * as firebase from 'firebase';
 
 const LoginScreen = props => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  let userName, userKey;
 
   const emailHandler = enteredEmail => {
     setEmail(enteredEmail);
@@ -20,10 +21,33 @@ const LoginScreen = props => {
         .auth()
         .signInWithEmailAndPassword(email, password)
         .then(res => {
+          firebase
+            .database()
+            .ref('/Users')
+            .orderByChild('email')
+            .equalTo(email)
+            .on('value', snapshot => {
+              snapshot.forEach(data => {
+                userKey = data.key;
+              });
+              userName = snapshot.child(`${userKey}`).val().name;
+              // console.log(userKey, userName);
+              // userDataHandler();
+            });
           props.navigation.navigate({routeName: 'Consultation'});
         });
     } catch (error) {
       console.log('error');
+    }
+  };
+
+  const userDataHandler = async () => {
+    // console.log('name', userName);
+    try {
+      console.log('name', userName);
+      await AsyncStorage.setItem('userName', userName);
+    } catch (error) {
+      // Error saving data
     }
   };
 
