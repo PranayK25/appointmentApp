@@ -90,9 +90,17 @@ const BookingScreen = props => {
             return null;
           }
         }}
-        renderSectionHeader={({section: {title}}) => {
-          if ({title}) {
-            return <Text>{title}</Text>;
+        renderSectionHeader={({section}) => {
+          let count = 0;
+          section.data.map(val => {
+            if (val.isBooked === false) {
+              count += 1;
+            }
+          });
+          if (count) {
+            return <Text style={styles.styleTextTitle}>{section.title}</Text>;
+          } else {
+            return null;
           }
         }}
       />
