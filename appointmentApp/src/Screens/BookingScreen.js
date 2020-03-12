@@ -16,7 +16,6 @@ const BookingScreen = props => {
   const [bookings, setBookings] = useState([]);
   const [localBookingList, setLocalBookingList] = useState([]);
   const [userName, setUserName] = useState('');
-  // let userName, userKey;
 
   useEffect(() => {
     firebase
@@ -27,7 +26,6 @@ const BookingScreen = props => {
         const sectionData = onSection(data);
         setLocalBookingList(Object.values(data));
         setBookings(sectionData);
-        // userDetailsHandler();
       });
   }, []);
 
@@ -79,7 +77,6 @@ const BookingScreen = props => {
     firebase
       .database()
       .ref(`/Consultations/${userName}`)
-      // .ref('/Consultations')
       .push(localBookingList[selectedIndex - 1]);
   };
 

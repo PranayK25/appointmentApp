@@ -1,62 +1,21 @@
-import React, {useState} from 'react';
-import {
-  Text,
-  View,
-  StyleSheet,
-  Button,
-  FlatList,
-  AsyncStorage,
-} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {Text, View, StyleSheet, Button, FlatList} from 'react-native';
 import ConsultationContainer from '../Components/ConsultationContainer';
 import * as firebase from 'firebase';
-import {NavigationEvents} from 'react-navigation';
 
 const ConsulationScreen = props => {
   const [consultations, setConsultations] = useState([]);
-  let userName;
-  let [username, setUsername] = useState('');
 
-  // useEffect(() => {
-  //   firebase
-  //     .database()
-  //     .ref(`/Consultations/${userName}`)
-  //     // .ref('/Consultations')
-  //     .on('value', querySnapShot => {
-  //       let data = querySnapShot.val() ? querySnapShot.val() : {};
-  //       setConsultations(Object.values(data));
-  //     });
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
-  // const consultationHandler = () => {
-
-  // }
-
-  const userDetailsHandler = async () => {
-    userName = await AsyncStorage.getItem('userName');
-    setUsername(userName);
-    databaseHandler();
-  };
-
-  // const databaseHandler = async () => {
-  //   const db = await firebase.database();
-  //   db.ref(`/Consultations/${userName}`)
-  //     // .ref('/Consultations')
-  //     .on('value', querySnapShot => {
-  //       let data = querySnapShot.val() ? querySnapShot.val() : {};
-  //       setConsultations(Object.values(data));
-  //     });
-  // };
-
-  const databaseHandler = () => {
+  useEffect(() => {
     firebase
       .database()
-      .ref(`/Consultations/${userName}`)
+      .ref(`/Consultations/${props.navigation.getParam('userName')}`)
       .on('value', querySnapShot => {
         let data = querySnapShot.val() ? querySnapShot.val() : {};
         setConsultations(Object.values(data));
       });
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onNewBooking = () => {
     props.navigation.navigate({routeName: 'Booking'});
@@ -68,8 +27,6 @@ const ConsulationScreen = props => {
 
   return (
     <View style={styles.consultationContainer}>
-      <NavigationEvents onWillFocus={userDetailsHandler} />
-      {/* <NavigationEvents onWillFocus={databaseHandler} /> */}
       <View style={styles.headingContainer}>
         <View style={styles.leftContainer} />
         <View style={styles.headingTextContainer}>
@@ -84,8 +41,9 @@ const ConsulationScreen = props => {
         </View>
       </View>
       <View style={styles.userTextContainer}>
-        {console.log('1st', username)}
-        <Text style={styles.userText}>Member : {username} </Text>
+        <Text style={styles.userText}>
+          Member : {props.navigation.getParam('userName')}
+        </Text>
       </View>
       <FlatList
         keyExtractor={(item, index) => index.toString()}

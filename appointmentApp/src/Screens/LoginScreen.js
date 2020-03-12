@@ -33,7 +33,6 @@ const LoginScreen = props => {
               userName = snapshot.child(`${userKey}`).val().name;
               userDataHandler();
             });
-          props.navigation.navigate({routeName: 'Consultation'});
         });
     } catch (error) {
       console.log('error');
@@ -43,6 +42,7 @@ const LoginScreen = props => {
   const userDataHandler = async () => {
     await AsyncStorage.setItem('userName', userName);
     await AsyncStorage.setItem('userKey', userKey);
+    props.navigation.navigate('Consultation', {userName: userName});
   };
 
   return (
