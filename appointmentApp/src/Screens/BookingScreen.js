@@ -1,12 +1,22 @@
 import React, {useState, useEffect} from 'react';
-import {Text, View, StyleSheet, Button, SectionList} from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Button,
+  SectionList,
+  AsyncStorage,
+} from 'react-native';
 import * as firebase from 'firebase';
 import AvailableSlotsContainer from '../Components/AvaliableSlotsContainer';
+import {NavigationEvents} from 'react-navigation';
 
 const BookingScreen = props => {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [localBookingList, setLocalBookingList] = useState([]);
+  const [userName, setUserName] = useState('');
+  // let userName, userKey;
 
   useEffect(() => {
     firebase
@@ -17,8 +27,14 @@ const BookingScreen = props => {
         const sectionData = onSection(data);
         setLocalBookingList(Object.values(data));
         setBookings(sectionData);
+        // userDetailsHandler();
       });
   }, []);
+
+  const userDetailsHandler = async () => {
+    let username = await AsyncStorage.getItem('userName');
+    setUserName(username);
+  };
 
   const onSection = data => {
     let sectionListArray = Object.values(data);
@@ -62,12 +78,14 @@ const BookingScreen = props => {
   const newBookingHandler = () => {
     firebase
       .database()
-      .ref('/Consultations')
+      .ref(`/Consultations/${userName}`)
+      // .ref('/Consultations')
       .push(localBookingList[selectedIndex - 1]);
   };
 
   return (
     <View style={styles.slotContainer}>
+      <NavigationEvents onWillFocus={userDetailsHandler} />
       <View style={styles.headerContainer}>
         <Text style={styles.header}>Available Slots</Text>
       </View>

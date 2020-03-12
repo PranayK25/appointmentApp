@@ -31,8 +31,7 @@ const LoginScreen = props => {
                 userKey = data.key;
               });
               userName = snapshot.child(`${userKey}`).val().name;
-              // console.log(userKey, userName);
-              // userDataHandler();
+              userDataHandler();
             });
           props.navigation.navigate({routeName: 'Consultation'});
         });
@@ -42,13 +41,8 @@ const LoginScreen = props => {
   };
 
   const userDataHandler = async () => {
-    // console.log('name', userName);
-    try {
-      console.log('name', userName);
-      await AsyncStorage.setItem('userName', userName);
-    } catch (error) {
-      // Error saving data
-    }
+    await AsyncStorage.setItem('userName', userName);
+    await AsyncStorage.setItem('userKey', userKey);
   };
 
   return (

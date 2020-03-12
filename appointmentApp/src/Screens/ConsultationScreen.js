@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   Text,
   View,
@@ -9,11 +9,54 @@ import {
 } from 'react-native';
 import ConsultationContainer from '../Components/ConsultationContainer';
 import * as firebase from 'firebase';
+import {NavigationEvents} from 'react-navigation';
 
 const ConsulationScreen = props => {
   const [consultations, setConsultations] = useState([]);
   let userName;
-  // const [filteredList, setFilteredList] = useState([]);
+  let [username, setUsername] = useState('');
+
+  // useEffect(() => {
+  //   firebase
+  //     .database()
+  //     .ref(`/Consultations/${userName}`)
+  //     // .ref('/Consultations')
+  //     .on('value', querySnapShot => {
+  //       let data = querySnapShot.val() ? querySnapShot.val() : {};
+  //       setConsultations(Object.values(data));
+  //     });
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
+
+  // const consultationHandler = () => {
+
+  // }
+
+  const userDetailsHandler = async () => {
+    userName = await AsyncStorage.getItem('userName');
+    setUsername(userName);
+    databaseHandler();
+  };
+
+  // const databaseHandler = async () => {
+  //   const db = await firebase.database();
+  //   db.ref(`/Consultations/${userName}`)
+  //     // .ref('/Consultations')
+  //     .on('value', querySnapShot => {
+  //       let data = querySnapShot.val() ? querySnapShot.val() : {};
+  //       setConsultations(Object.values(data));
+  //     });
+  // };
+
+  const databaseHandler = () => {
+    firebase
+      .database()
+      .ref(`/Consultations/${userName}`)
+      .on('value', querySnapShot => {
+        let data = querySnapShot.val() ? querySnapShot.val() : {};
+        setConsultations(Object.values(data));
+      });
+  };
 
   const onNewBooking = () => {
     props.navigation.navigate({routeName: 'Booking'});
@@ -23,39 +66,10 @@ const ConsulationScreen = props => {
     props.navigation.navigate({routeName: 'Filter'});
   };
 
-  // const onFilter = () => {
-  //   setFilteredList(
-  //     consultations.filter(
-  //       consultation =>
-  //         (consultation.date === filterDate && consultation.time === filterTime)
-  //     ),
-  //   );
-  // };
-
-  useEffect(() => {
-    firebase
-      .database()
-      .ref('/Consultations')
-      .on('value', querySnapShot => {
-        let data = querySnapShot.val() ? querySnapShot.val() : {};
-        setConsultations(Object.values(data));
-      });
-    // userName = userNameHandler();
-    // console.log(userName);
-  }, []);
-
-  const userNameHandler = async () => {
-    let userId = '';
-    try {
-      userId = (await AsyncStorage.getItem('userName')) || 'none';
-    } catch (error) {
-      console.log(error.message);
-    }
-    return userId;
-  };
-
   return (
     <View style={styles.consultationContainer}>
+      <NavigationEvents onWillFocus={userDetailsHandler} />
+      {/* <NavigationEvents onWillFocus={databaseHandler} /> */}
       <View style={styles.headingContainer}>
         <View style={styles.leftContainer} />
         <View style={styles.headingTextContainer}>
@@ -70,7 +84,8 @@ const ConsulationScreen = props => {
         </View>
       </View>
       <View style={styles.userTextContainer}>
-        <Text style={styles.userText}>Member : </Text>
+        {console.log('1st', username)}
+        <Text style={styles.userText}>Member : {username} </Text>
       </View>
       <FlatList
         keyExtractor={(item, index) => index.toString()}
