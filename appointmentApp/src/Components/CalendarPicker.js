@@ -1,9 +1,11 @@
 import React, {useState} from 'react';
 import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import moment from 'moment';
 
-const CalendarPicker = () => {
+const CalendarPicker = props => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [selectedDate, setSelectedDate] = useState('Date');
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -14,14 +16,16 @@ const CalendarPicker = () => {
   };
 
   const handleConfirm = date => {
-    console.log('A date has been picked: ', date);
+    const currectDate = moment(date).format('ddd, DD MMMM YYYY');
+    setSelectedDate(currectDate);
+    props.onSetDate(currectDate);
     hideDatePicker();
   };
 
   return (
     <View>
       <TouchableOpacity onPress={showDatePicker}>
-        <Text style={styles.textStyle}>Date</Text>
+        <Text style={styles.textStyle}>{selectedDate}</Text>
       </TouchableOpacity>
       <DateTimePickerModal
         isVisible={isDatePickerVisible}

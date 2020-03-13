@@ -14,8 +14,7 @@ const ConsulationScreen = props => {
         let data = querySnapShot.val() ? querySnapShot.val() : {};
         setConsultations(Object.values(data));
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [props.navigation]);
 
   const onNewBooking = () => {
     props.navigation.navigate({routeName: 'Booking'});
@@ -49,17 +48,32 @@ const ConsulationScreen = props => {
         keyExtractor={(item, index) => index.toString()}
         data={consultations}
         renderItem={({item: itemData}) => {
+          let dateTime = props.navigation.getParam('dateTime');
           if (!itemData) {
             return null;
           } else {
-            return (
-              <ConsultationContainer
-                doctor={itemData.Doctor}
-                speciality={itemData.Speciality}
-                time={itemData.Time}
-                date={itemData.Date}
-              />
-            );
+            if (!dateTime || dateTime === ' ') {
+              return (
+                <ConsultationContainer
+                  doctor={itemData.Doctor}
+                  speciality={itemData.Speciality}
+                  time={itemData.Time}
+                  date={itemData.Date}
+                />
+              );
+            } else if (
+              dateTime &&
+              dateTime === itemData.Date + ' ' + itemData.Time
+            ) {
+              return (
+                <ConsultationContainer
+                  doctor={itemData.Doctor}
+                  speciality={itemData.Speciality}
+                  time={itemData.Time}
+                  date={itemData.Date}
+                />
+              );
+            }
           }
         }}
       />

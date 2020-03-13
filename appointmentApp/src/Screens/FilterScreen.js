@@ -4,8 +4,12 @@ import CalendarPicker from '../Components/CalendarPicker';
 import TimePicker from '../Components/TimePicker';
 
 const FilterScreen = props => {
+  const [date, setDate] = useState('');
+  const [time, setTime] = useState('');
+
   const onSubmit = () => {
-    props.navigation.navigate({routeName: 'Consultation'});
+    const dateAndTime = date + ' ' + time;
+    props.navigation.navigate('Consultation', {dateTime: dateAndTime});
   };
 
   return (
@@ -20,10 +24,10 @@ const FilterScreen = props => {
           </View>
           <View style={styles.timeDateContainer}>
             <View style={styles.datePicker}>
-              <CalendarPicker />
+              <CalendarPicker onSetDate={setDate} />
             </View>
             <View style={styles.timePicker}>
-              <TimePicker />
+              <TimePicker onSetTime={setTime} />
             </View>
           </View>
         </View>
