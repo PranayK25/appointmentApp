@@ -1,5 +1,12 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, TextInput, Button, AsyncStorage} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TextInput,
+  Button,
+  AsyncStorage,
+  Alert,
+} from 'react-native';
 import * as firebase from 'firebase';
 
 const LoginScreen = props => {
@@ -16,27 +23,26 @@ const LoginScreen = props => {
   };
 
   const login = () => {
-    try {
-      firebase
-        .auth()
-        .signInWithEmailAndPassword(email, password)
-        .then(res => {
-          firebase
-            .database()
-            .ref('/Users')
-            .orderByChild('email')
-            .equalTo(email)
-            .on('value', snapshot => {
-              snapshot.forEach(data => {
-                userKey = data.key;
-              });
-              userName = snapshot.child(`${userKey}`).val().name;
-              userDataHandler();
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(res => {
+        firebase
+          .database()
+          .ref('/Users')
+          .orderByChild('email')
+          .equalTo(email)
+          .on('value', snapshot => {
+            snapshot.forEach(data => {
+              userKey = data.key;
             });
-        });
-    } catch (error) {
-      console.log('error');
-    }
+            userName = snapshot.child(`${userKey}`).val().name;
+            userDataHandler();
+          });
+      })
+      .catch(error => {
+        Alert.alert(error.toString(error));
+      });
   };
 
   const userDataHandler = async () => {

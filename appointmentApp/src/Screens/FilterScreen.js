@@ -12,11 +12,21 @@ const FilterScreen = props => {
     props.navigation.navigate('Consultation', {dateTime: dateAndTime});
   };
 
+  const filterClear = () => {
+    setDate('');
+    setTime('');
+    onSubmit();
+  };
+
   return (
     <Modal animationType="slide">
       <View style={styles.filterContainer}>
         <View style={styles.filterHeader}>
-          <Text style={styles.headerText}> Clear </Text>
+          <Button
+            style={styles.headerText}
+            title="Clear"
+            onPress={filterClear}
+          />
         </View>
         <View style={styles.datePickerContainer}>
           <View>
